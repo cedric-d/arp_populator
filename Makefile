@@ -1,6 +1,6 @@
 BIN = arp_populator
 CFLAGS = -g -O2 -Wall -std=gnu99
-LDFLAGS = -lrt
+LDLIBS = -lrt
 
 all: $(BIN)
 
