@@ -174,11 +174,6 @@ static void process_block(struct tpacket_block_desc *block)
 		if (j == localAddrCount)
 			continue;
 
-		if ((pkt->tp_status & TP_STATUS_TS_SOFTWARE) == 0) {
-			fprintf(stderr, "No timestamp\n");
-			continue;
-		}
-
 		tst = pkt->tp_sec;
 		gmtime_r(&tst, &tstm);
 		strftime(ts, sizeof(ts), "%FT%T", &tstm);
