@@ -22,12 +22,10 @@ static volatile sig_atomic_t updAddr = 1;
 
 static const char *netif;
 
-struct addr_t {
+static struct addr_t {
 	uint32_t network;
 	uint32_t netmask;
-};
-
-static struct addr_t *localAddr = NULL;
+} *localAddr = NULL;
 static int localAddrCount = 0;
 
 static const clockid_t clocks[] = {
@@ -96,10 +94,13 @@ static void updateAddresses()
 
 int main(int argc, char *argv[])
 {
+	static const struct sigaction act = {
+		.sa_handler = sighandler
+	};
+
 	struct sockaddr_ll addr;
 	struct timespec ts;
 	struct iphdr hdr;
-	struct sigaction act;
 	socklen_t addrlen;
 	ssize_t len;
 	clockid_t clockid = CLOCK_REALTIME;
@@ -119,9 +120,6 @@ int main(int argc, char *argv[])
 			break;
 		}
 	}
-
-	memset(&act, 0, sizeof(act));
-	act.sa_handler = sighandler;
 
 	if (sigaction(SIGINT, &act, NULL) == -1
 	 || sigaction(SIGTERM, &act, NULL) == -1
