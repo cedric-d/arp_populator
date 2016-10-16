@@ -40,12 +40,10 @@ static volatile sig_atomic_t addressUpdateRequested = 1;
 
 static const char *netif;
 
-struct addr_t {
+static struct addr_t {
 	uint32_t network;
 	uint32_t netmask;
-};
-
-static struct addr_t *localAddr = NULL;
+} *localAddr = NULL;
 static unsigned int localAddrCount = 0;
 
 static void sighandler(int signo)
@@ -107,7 +105,7 @@ static void update_local_addresses()
 
 static bool create_socket(int *sockfd, void **ring_buf)
 {
-	struct sockaddr_ll addr = {
+	const struct sockaddr_ll addr = {
 		.sll_family   = AF_PACKET,
 		.sll_protocol = htons(ETH_P_IP),
 		.sll_ifindex  = if_nametoindex(netif)
@@ -136,7 +134,7 @@ static bool create_socket(int *sockfd, void **ring_buf)
 		return false;
 	}
 
-	if (bind(*sockfd, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+	if (bind(*sockfd, (const struct sockaddr *)&addr, sizeof(addr)) == -1) {
 		perror("bind");
 		return false;
 	}
@@ -224,7 +222,7 @@ static bool receive_packets(int sockfd, struct iovec blocks[])
 
 int main(int argc, char *argv[])
 {
-	static struct sigaction act = {
+	static const struct sigaction act = {
 		.sa_handler = sighandler
 	};
 
